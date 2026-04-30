@@ -1,5 +1,6 @@
-# android-deepseek-api
-Android，提供对deepseek api的封装。
+```kotlin
+// android-deepseek-api
+// Android，提供对deepseek api的封装。
 
 DeepseekConfig.init("your deepseek api key") // 初始化
 
@@ -57,3 +58,4 @@ conversation.sendStreaming(
     },
     model, enabledThinking, reasoningEffort
 )
+```
