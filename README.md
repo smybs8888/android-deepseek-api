@@ -1,4 +1,8 @@
 ```kotlin
+implementation("com.github.smybs8888:android-deepseek-api:1.0.0")
+```
+
+```kotlin
 // android-deepseek-api
 // Android，提供对deepseek api的封装。
 
