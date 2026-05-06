@@ -25,7 +25,7 @@ internal data class ResponseMessage(
     val content: String,
     val reasoning_content: String,
 ) {
-    val roleE: ChatRole get() = ChatRole.ASSISTANT
+    val roleE: ChatRole get() = ChatRole.pause(role)
 }
 
 internal data class ResponseUsage(
@@ -64,5 +64,5 @@ internal data class StreamResponseDelta(
     val content: String?,
     val reasoning_content: String?,
 ) {
-    val roleE: ChatRole get() = ChatRole.ASSISTANT
+    val roleE: ChatRole get() = ChatRole.pause(role)
 }

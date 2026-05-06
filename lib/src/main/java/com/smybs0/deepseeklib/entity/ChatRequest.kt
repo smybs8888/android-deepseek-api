@@ -27,13 +27,13 @@ internal data class RequestMessage(
     val roleE: ChatRole get() = ChatRole.pause(role)
 }
 
-internal data class RequestThinking private constructor(
-    val type: String,
-) {
+internal sealed class RequestThinking(val type: String) {
+    object Enabled : RequestThinking("enabled")
+    object Disabled : RequestThinking("disabled")
+
     companion object {
         fun from(enabledThinking: Boolean): RequestThinking =
-            if (enabledThinking) RequestThinking("enabled")
-            else RequestThinking("disabled")
+            if (enabledThinking) Enabled else Disabled
     }
 }
 

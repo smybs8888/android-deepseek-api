@@ -13,12 +13,12 @@ import com.smybs0.deepseeklib.entity.RequestThinking
 import com.smybs0.deepseeklib.entity.ResponseChoice
 import com.smybs0.deepseeklib.entity.ResponseMessage
 import okhttp3.Call
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
-import java.io.IOException
+import okio.IOException
 import java.util.concurrent.TimeUnit
 
 internal object ChatApiService {
@@ -36,7 +36,7 @@ internal object ChatApiService {
                 .build())
         }
         .build()
-    private val requestMediaType = MediaType.parse("application/json")
+    private val requestMediaType = "application/json".toMediaTypeOrNull()
     private var apiKey: String? = null
     val handler = Handler(Looper.getMainLooper())
 
@@ -62,17 +62,17 @@ internal object ChatApiService {
                 .build()
 
             client.newCall(request).enqueue(object : okhttp3.Callback {
-                override fun onFailure(call: Call?, e: IOException) {
+                override fun onFailure(call: Call, e: java.io.IOException) {
                     callback.onFailure(e)
                 }
 
-                override fun onResponse(call: Call?, response: Response) {
+                override fun onResponse(call: Call, response: Response) {
                     if (!response.isSuccessful) {
-                        callback.onFailure(RuntimeException("HTTP ${response.code()} : ${response.body()?.string()}"))
+                        callback.onFailure(RuntimeException("HTTP ${response.code} : ${response.body?.string()}"))
                         return
                     }
 
-                    val result = gson.fromJson(response.body()?.string(), ChatResponse::class.java)
+                    val result = gson.fromJson(response.body?.string(), ChatResponse::class.java)
 
                     val choice = result.choices[0]
                     if (choice.isNormalStop()) {
@@ -110,17 +110,17 @@ internal object ChatApiService {
                 .build()
 
             client.newCall(request).enqueue(object : okhttp3.Callback {
-                override fun onFailure(call: Call?, e: IOException) {
+                override fun onFailure(call: Call, e: java.io.IOException) {
                     callback.onFailure(e)
                 }
 
-                override fun onResponse(call: Call?, response: Response) {
+                override fun onResponse(call: Call, response: Response) {
                     if (!response.isSuccessful) {
-                        callback.onFailure(RuntimeException("HTTP ${response.code()} : ${response.body()?.string()}"))
+                        callback.onFailure(RuntimeException("HTTP ${response.code} : ${response.body?.string()}"))
                         return
                     }
 
-                    val bufferedReader = response.body()!!.byteStream().bufferedReader()
+                    val bufferedReader = response.body!!.byteStream().bufferedReader()
                     var lineStr: String?
                     val contentBuilder = StringBuilder()
                     val reasonContentBuilder = StringBuilder()

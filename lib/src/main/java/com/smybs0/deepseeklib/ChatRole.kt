@@ -10,9 +10,9 @@ enum class ChatRole(val roleStr: String) {
         fun pause(role: String): ChatRole {
             return when (role) {
                 "system" -> SYSTEM
-                "user" -> SYSTEM
-                "assistant" -> SYSTEM
-                "tool" -> SYSTEM
+                "user" -> USER
+                "assistant" -> ASSISTANT
+                "tool" -> TOOL
                 else -> throw RuntimeException("无法将${role}转为已有类型")
             }
         }

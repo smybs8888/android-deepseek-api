@@ -14,7 +14,7 @@ import com.smybs0.deepseeklib.Message
 internal class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val conversation = DeepseekConversation.create("你是一个资深android开发者")
+    private val conversation = DeepseekConversation.create(characterSetting = "你是一个资深android开发者")
 
     private lateinit var messageAdapter: MessageAdapter
 
@@ -22,7 +22,7 @@ internal class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        DeepseekConfig.init("your deepseek api key")
+        DeepseekConfig.init("sk-e9cfebb57763477d8407bc5effe69cbc")
 
         messageAdapter = MessageAdapter(this, conversation.messageList)
         binding.rv.adapter = messageAdapter
