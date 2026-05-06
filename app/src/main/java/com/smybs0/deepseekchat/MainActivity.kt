@@ -22,7 +22,7 @@ internal class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        DeepseekConfig.init("sk-e9cfebb57763477d8407bc5effe69cbc")
+        DeepseekConfig.init("your ds api key")
 
         messageAdapter = MessageAdapter(this, conversation.messageList)
         binding.rv.adapter = messageAdapter
