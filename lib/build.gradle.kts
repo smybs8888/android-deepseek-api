@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -37,6 +38,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
+    // Room
+    implementation("androidx.room:room-ktx:2.8.4")
+    ksp("androidx.room:room-compiler:2.8.4")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

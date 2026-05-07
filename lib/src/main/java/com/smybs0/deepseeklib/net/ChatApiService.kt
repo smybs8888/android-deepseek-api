@@ -3,7 +3,7 @@ package com.smybs0.deepseeklib.net
 import android.os.Handler
 import android.os.Looper
 import com.google.gson.Gson
-import com.smybs0.deepseeklib.ChatRole
+import com.smybs0.deepseeklib.entity.ChatRole
 import com.smybs0.deepseeklib.entity.ChatRequest
 import com.smybs0.deepseeklib.entity.ChatResponse
 import com.smybs0.deepseeklib.entity.ChatStreamResponse
@@ -17,8 +17,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
-import okio.IOException
 import java.util.concurrent.TimeUnit
 
 internal object ChatApiService {
@@ -58,7 +58,7 @@ internal object ChatApiService {
 
             val request = Request.Builder()
                 .url("https://api.deepseek.com/chat/completions")
-                .post(RequestBody.create(requestMediaType, gson.toJson(chatRequest)))
+                .post(gson.toJson(chatRequest).toRequestBody(requestMediaType))
                 .build()
 
             client.newCall(request).enqueue(object : okhttp3.Callback {
@@ -106,7 +106,7 @@ internal object ChatApiService {
 
             val request = Request.Builder()
                 .url("https://api.deepseek.com/chat/completions")
-                .post(RequestBody.create(requestMediaType, gson.toJson(chatRequest)))
+                .post(gson.toJson(chatRequest).toRequestBody(requestMediaType))
                 .build()
 
             client.newCall(request).enqueue(object : okhttp3.Callback {

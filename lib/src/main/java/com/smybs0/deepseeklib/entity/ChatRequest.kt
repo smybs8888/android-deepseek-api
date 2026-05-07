@@ -1,7 +1,5 @@
 package com.smybs0.deepseeklib.entity
 
-import com.smybs0.deepseeklib.ChatRole
-
 internal data class ChatRequest(
     val messages: List<RequestMessage>,
     val model: String,

@@ -1,4 +1,4 @@
-package com.smybs0.deepseeklib
+package com.smybs0.deepseeklib.entity
 
 enum class ChatRole(val roleStr: String) {
     SYSTEM("system"),

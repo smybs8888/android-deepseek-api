@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.smybs0.deepseekchat.databinding.ItemMessageBinding
-import com.smybs0.deepseeklib.Message
+import com.smybs0.deepseeklib.entity.Message
 
 internal class MessageAdapter(
     private val context: Context,

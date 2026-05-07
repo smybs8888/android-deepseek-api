@@ -1,7 +1,5 @@
 package com.smybs0.deepseeklib.entity
 
-import com.smybs0.deepseeklib.ChatRole
-
 internal data class ChatResponse(
     val id: String,
     val choices: List<ResponseChoice>,
@@ -22,8 +20,8 @@ internal data class ResponseChoice(
 
 internal data class ResponseMessage(
     val role: String,
-    val content: String,
-    val reasoning_content: String,
+    val content: String?,
+    val reasoning_content: String?,
 ) {
     val roleE: ChatRole get() = ChatRole.pause(role)
 }

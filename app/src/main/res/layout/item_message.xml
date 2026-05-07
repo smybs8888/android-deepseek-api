@@ -8,11 +8,11 @@
 
         <import type="android.view.Gravity" />
 
-        <import type="com.smybs0.deepseeklib.ChatRole" />
+        <import type="com.smybs0.deepseeklib.entity.ChatRole" />
 
         <variable
             name="role"
-            type="com.smybs0.deepseeklib.ChatRole" />
+            type="com.smybs0.deepseeklib.entity.ChatRole" />
 
         <variable
             name="content"

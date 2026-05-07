@@ -4,33 +4,58 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.smybs0.deepseekchat.databinding.ActivityMainBinding
 import com.smybs0.deepseekchat.databinding.ItemMessageBinding
 import com.smybs0.deepseeklib.DeepseekConfig
 import com.smybs0.deepseeklib.DeepseekConversation
+import com.smybs0.deepseeklib.DeepseekConversationManager
 import com.smybs0.deepseeklib.DeepseekMode
-import com.smybs0.deepseeklib.Message
+import com.smybs0.deepseeklib.entity.ConversationDescData
+import com.smybs0.deepseeklib.entity.Message
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 internal class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val conversation = DeepseekConversation.create(characterSetting = "你是一个资深android开发者")
+    private lateinit var conversation: DeepseekConversation
 
     private lateinit var messageAdapter: MessageAdapter
+    private lateinit var conversationAdapter: ConversationAdapter
+    private val conversationList = ArrayList<ConversationDescData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        DeepseekConfig.init("sk-e9cfebb57763477d8407bc5effe69cbc")
-
-        messageAdapter = MessageAdapter(this, conversation.messageList)
-        binding.rv.adapter = messageAdapter
 
         binding.cbEnableThinking.setOnCheckedChangeListener { _, isChecked ->
             binding.rgReasoningEffort.visibility = if (isChecked) View.VISIBLE else View.INVISIBLE
         }
 
+        lifecycleScope.launch {
+            conversationList.addAll(DeepseekConversationManager.getHistoryConversationDescList("0"))
+            conversationAdapter = ConversationAdapter(
+                this@MainActivity,
+                lifecycleScope,
+                conversationList
+            ) {
+                setConversation(it)
+            }
+            binding.rvConversation.adapter = conversationAdapter
+        }
+
+        binding.btnNewConversation.setOnClickListener {
+            lifecycleScope.launch {
+                val newConversation = DeepseekConversationManager.createConversation("0")
+                setConversation(newConversation)
+                conversationList.add(newConversation.descData)
+                conversationAdapter.notifyItemInserted(conversationList.lastIndex)
+                delay(50)
+                conversationAdapter.setSelectedPosition(conversationList.lastIndex)
+            }
+        }
 
         binding.btnSend.setOnClickListener {
             val content = binding.etContent.text.toString()
@@ -143,5 +168,16 @@ internal class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "消息不能为空", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    fun setConversation(conversation: DeepseekConversation) {
+        binding.tvDesc.text = conversation.desc
+        conversation.addOnDescChangeListener { binding.tvDesc.text = it }
+
+        this.conversation = conversation
+        messageAdapter = MessageAdapter(this@MainActivity, conversation.messageList)
+        binding.rv.adapter = messageAdapter
+
+        binding.rv.scrollTo(0, 1e9.toInt())
     }
 }

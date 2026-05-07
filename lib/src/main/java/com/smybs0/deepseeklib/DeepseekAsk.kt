@@ -2,6 +2,8 @@ package com.smybs0.deepseeklib
 
 import com.smybs0.deepseeklib.DeepseekMode.MODEL_V4_FLASH
 import com.smybs0.deepseeklib.DeepseekMode.REASONING_EFFORT_HIGH
+import com.smybs0.deepseeklib.entity.ChatRole
+import com.smybs0.deepseeklib.entity.Message
 import com.smybs0.deepseeklib.entity.RequestMessage
 import com.smybs0.deepseeklib.entity.ResponseChoice
 import com.smybs0.deepseeklib.net.ChatApiService
@@ -25,8 +27,8 @@ object DeepseekAsk {
             override fun onSuccess(choice: ResponseChoice) {
                 val message = Message(
                     choice.message.roleE,
-                    choice.message.content,
-                    choice.message.reasoning_content,
+                    choice.message.content.orEmpty(),
+                    choice.message.reasoning_content.orEmpty(),
                     choice.finish_reason
                 )
                 callback.onSuccess(message)
@@ -61,8 +63,8 @@ object DeepseekAsk {
             override fun onFinish(choice: ResponseChoice) {
                 val message = Message(
                     choice.message.roleE,
-                    choice.message.content,
-                    choice.message.reasoning_content,
+                    choice.message.content.orEmpty(),
+                    choice.message.reasoning_content.orEmpty(),
                     choice.finish_reason
                 )
                 callback.onFinish(message)
@@ -84,4 +86,32 @@ object DeepseekAsk {
         fun onFinish(message: Message)
         fun onFailure(throwable: Throwable)
     }
+
+    internal fun summarize(
+        content: List<Message>,
+        callback: Callback,
+        model: String = MODEL_V4_FLASH,
+        enabledThinking: Boolean = true,
+        reasoningEffort: String? = REASONING_EFFORT_HIGH,
+    ) = ChatApiService.askDeepseek(
+        content.map { d -> RequestMessage(d.role.roleStr, d.content, "") },
+        model,
+        enabledThinking,
+        reasoningEffort,
+        object : ChatApiService.Callback {
+            override fun onSuccess(choice: ResponseChoice) {
+                val message = Message(
+                    choice.message.roleE,
+                    choice.message.content.orEmpty(),
+                    choice.message.reasoning_content.orEmpty(),
+                    choice.finish_reason
+                )
+                callback.onSuccess(message)
+            }
+
+            override fun onFailure(throwable: Throwable) {
+                callback.onFailure(throwable)
+            }
+        }
+    )
 }

@@ -1,4 +1,4 @@
-package com.smybs0.deepseeklib
+package com.smybs0.deepseeklib.entity
 
 data class Message(
     val role: ChatRole,
