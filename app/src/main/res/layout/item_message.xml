@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:layout_weight="1"
-            android:gravity="@{role == ChatRole.ASSISTANT ? Gravity.START : Gravity.END}"
+            android:gravity="@{role == ChatRole.ASSISTANT ? Gravity.START : role == ChatRole.USER ? Gravity.END: Gravity.CENTER}"
             android:orientation="vertical">
 
             <View
@@ -74,7 +74,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:visibility="@{role != ChatRole.ASSISTANT ? View.VISIBLE : View.INVISIBLE}"
+            android:visibility="@{role == ChatRole.USER ? View.VISIBLE : View.INVISIBLE}"
             app:cardCornerRadius="15dp">
 
             <ImageView

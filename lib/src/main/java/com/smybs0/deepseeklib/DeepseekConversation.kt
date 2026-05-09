@@ -2,6 +2,7 @@ package com.smybs0.deepseeklib
 
 import android.telecom.CallAudioState
 import com.google.gson.Gson
+import com.smybs0.deepseeklib.DeepseekConversation.Companion.gson
 import com.smybs0.deepseeklib.DeepseekMode.MODEL_V4_FLASH
 import com.smybs0.deepseeklib.DeepseekMode.REASONING_EFFORT_HIGH
 import com.smybs0.deepseeklib.entity.ChatRole
@@ -38,6 +39,7 @@ class DeepseekConversation private constructor() {
             val conversation = DeepseekConversation()
             conversation.mConversationDescData = conversationDescData
             conversation.mMessageList.add(Message(ChatRole.SYSTEM, characterSetting, "", ""))
+            conversation.updateData()
             return conversation
         }
 
@@ -59,7 +61,7 @@ class DeepseekConversation private constructor() {
      */
         val summarizeMessage = Message(
             ChatRole.USER,
-            "对当前对话内容进行总结，不超过20字符，不带除空格外任何标点符号",
+            "对当前对话内容进行总结，不超过10字符，不带除空格外任何标点符号",
             "",
             ""
         )

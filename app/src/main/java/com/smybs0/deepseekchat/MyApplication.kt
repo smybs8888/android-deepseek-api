@@ -6,6 +6,6 @@ import com.smybs0.deepseeklib.DeepseekConfig
 class MyApplication: Application() {
     override fun onCreate() {
         super.onCreate()
-        DeepseekConfig.init(this, "user deepseek api key")
+        DeepseekConfig.init(this, "sk-e9cfebb57763477d8407bc5effe69cbc")
     }
 }

@@ -27,6 +27,12 @@ class ConversationAdapter(
     private val onClickItemListener: (DeepseekConversation) -> Unit,
 ) : RecyclerView.Adapter<ConversationAdapter.ViewHolder>() {
     private var curSelectPosition = -1
+    private lateinit var selectedConversation: DeepseekConversation
+    private var onDescChangeListener: DeepseekConversation.OnDescChangeListener? = null
+
+    init {
+        setHasStableIds(true)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -46,18 +52,19 @@ class ConversationAdapter(
 
             if (curSelectPosition == position) {
                 root.setBackgroundColor("#FFEEEEEE".toColorInt())
+                onDescChangeListener =
+                    DeepseekConversation.OnDescChangeListener { holder.binding.desc = it }
+                selectedConversation.addOnDescChangeListener(onDescChangeListener!!)
             } else {
                 root.setBackgroundColor(Color.WHITE)
             }
 
             root.setOnClickListener {
-                setSelectedPosition(position)
-
                 lifecycleScope.launch {
                     val openHistoryConversation =
                         DeepseekConversationManager.openHistoryConversation(item.cid)
-                    openHistoryConversation.addOnDescChangeListener { desc = it }
 
+                    setSelectedPosition(position, openHistoryConversation)
                     onClickItemListener(openHistoryConversation)
                 }
             }
@@ -66,10 +73,15 @@ class ConversationAdapter(
 
     override fun getItemCount() = list.size
 
+    override fun getItemId(position: Int): Long {
+        return list[position].cid
+    }
 
 
-    fun setSelectedPosition(newPosition: Int) {
+    fun setSelectedPosition(newPosition: Int, conversation: DeepseekConversation) {
         if (curSelectPosition != newPosition) {
+            selectedConversation = conversation
+
             val lastSelectedPosition = curSelectPosition
             curSelectPosition = newPosition
 
