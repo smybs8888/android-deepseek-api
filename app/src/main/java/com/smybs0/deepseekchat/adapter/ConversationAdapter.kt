@@ -1,4 +1,4 @@
-package com.smybs0.deepseekchat
+package com.smybs0.deepseekchat.adapter
 
 import android.content.Context
 import android.graphics.Color
@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.smybs0.deepseekchat.databinding.ItemConversationBinding
 import com.smybs0.deepseeklib.DeepseekConversation

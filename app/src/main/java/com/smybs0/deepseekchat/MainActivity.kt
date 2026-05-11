@@ -2,14 +2,19 @@ package com.smybs0.deepseekchat
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.smybs0.deepseekchat.adapter.ConversationAdapter
+import com.smybs0.deepseekchat.adapter.MessageAdapter
 import com.smybs0.deepseekchat.databinding.ActivityMainBinding
 import com.smybs0.deepseekchat.databinding.ItemMessageBinding
+import com.smybs0.deepseekchat.utils.getMarkdown
 import com.smybs0.deepseeklib.DeepseekConversation
 import com.smybs0.deepseeklib.DeepseekConversationManager
 import com.smybs0.deepseeklib.DeepseekConversationManager.createConversation
@@ -32,8 +37,10 @@ internal class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
         binding.isConversationState = false
         binding.isEnabledThinking = true
+        binding.cbStartStreaming.isChecked = true
         binding.rv.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         lifecycleScope.launch {
@@ -111,13 +118,16 @@ internal class MainActivity : AppCompatActivity() {
                         object : DeepseekConversation.StreamingCallback {
                             var assistantPosition = -1
                             var itemBinding: ItemMessageBinding? = null
-                            var cacheContent = ""
-                            var cacheReasonContent = ""
+                            var cacheContent = StringBuilder()
+                            var cacheReasonContent = StringBuilder()
+                            var isFollowBottom = false
 
                             override fun onSend(position: Int, assistantPosition: Int) {
                                 this.assistantPosition = assistantPosition
-                                messageAdapter.notifyItemInserted(position)
-                                messageAdapter.notifyItemInserted(assistantPosition)
+                                messageAdapter.notifyItemRangeInserted(position, assistantPosition)
+                                binding.rv.post {
+                                    binding.rv.scrollToPosition(assistantPosition)
+                                }
                             }
 
                             override fun onUpdate(
@@ -125,32 +135,56 @@ internal class MainActivity : AppCompatActivity() {
                                 contentIncrement: String,
                                 reasonContentIncrement: String,
                             ) {
+                                isFollowBottom = !binding.rv.canScrollVertically(20)
+
+                                cacheContent.append(contentIncrement)
+                                cacheReasonContent.append(reasonContentIncrement)
+
                                 if (itemBinding == null) {
                                     itemBinding = messageAdapter.getBinding(assistantPosition)
-                                    cacheContent += contentIncrement
-                                    cacheReasonContent += reasonContentIncrement
                                     if (itemBinding != null) {
-                                        itemBinding!!.content = cacheContent
-                                        itemBinding!!.reasonContent = cacheReasonContent
+                                        itemBinding!!.tvReasonContent.visibility =
+                                            if (!enabledThinking) {
+                                                View.GONE
+                                            } else {
+                                                View.VISIBLE
+                                            }
+
+                                        if (cacheContent.isNotEmpty()) {
+                                            itemBinding!!.tvContent.text = cacheContent.toString()
+                                        }
+                                        if (cacheReasonContent.isNotEmpty()) {
+                                            itemBinding!!.tvReasonContent.text =
+                                                getMarkdown(cacheReasonContent.toString())
+                                        }
                                     }
                                 } else {
                                     if (contentIncrement.isNotEmpty()) {
-                                        itemBinding!!.content += contentIncrement
+                                        itemBinding!!.tvContent.text = cacheContent.toString()
                                     }
                                     if (reasonContentIncrement.isNotEmpty()) {
-                                        itemBinding!!.reasonContent += reasonContentIncrement
+                                        itemBinding!!.tvReasonContent.text =
+                                            getMarkdown(cacheReasonContent.toString())
+                                    }
+                                }
+
+                                if (isFollowBottom) {
+                                    binding.rv.post {
+                                        if (binding.rv.canScrollVertically(1)) {
+                                            binding.rv.scrollBy(0, 1e9.toInt())
+                                        }
                                     }
                                 }
                             }
 
                             override fun onFinish(message: Message, positon: Int) {
-                                messageAdapter.notifyItemChanged(positon)
                                 Toast.makeText(
                                     this@MainActivity,
                                     "接收完成",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 binding.btnSend.isEnabled = true
+
                             }
 
                             override fun onFailure(throwable: Throwable) {
@@ -171,11 +205,17 @@ internal class MainActivity : AppCompatActivity() {
                         object : DeepseekConversation.Callback {
                             override fun onSend(position: Int) {
                                 messageAdapter.notifyItemInserted(position)
+                                binding.rv.post {
+                                    binding.rv.scrollToPosition(position)
+                                }
                             }
 
                             override fun onSuccess(message: Message, position: Int) {
                                 messageAdapter.notifyItemInserted(position)
                                 binding.btnSend.isEnabled = true
+                                binding.rv.post {
+                                    binding.rv.scrollToPosition(position)
+                                }
                             }
 
                             override fun onFailure(throwable: Throwable) {
@@ -211,5 +251,9 @@ internal class MainActivity : AppCompatActivity() {
         binding.isConversationState = true
         messageAdapter = MessageAdapter(this, conversation.messageList)
         binding.rv.adapter = messageAdapter
+
+        binding.rv.post {
+            binding.rv.scrollBy(0, 1e9.toInt())
+        }
     }
 }

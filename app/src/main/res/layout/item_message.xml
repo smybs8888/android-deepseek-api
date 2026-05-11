@@ -6,6 +6,8 @@
 
         <import type="android.view.View" />
 
+        <import type="android.graphics.Color" />
+
         <import type="android.view.Gravity" />
 
         <import type="com.smybs0.deepseeklib.entity.ChatRole" />
@@ -13,14 +15,6 @@
         <variable
             name="role"
             type="com.smybs0.deepseeklib.entity.ChatRole" />
-
-        <variable
-            name="content"
-            type="String" />
-
-        <variable
-            name="reasonContent"
-            type="String" />
     </data>
 
     <LinearLayout
@@ -55,19 +49,21 @@
                 android:layout_height="0dp" />
 
             <TextView
+                android:id="@+id/tv_reason_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="#CCC"
+                android:background="#ededee"
                 android:padding="5dp"
-                android:text="@{reasonContent}"
-                android:textSize="12sp"
-                android:visibility="@{reasonContent.length() != 0 ? View.VISIBLE : View.GONE}" />
+                android:textIsSelectable="true"
+                android:textSize="12sp" />
 
-            <TextView
+            <com.smybs0.deepseekchat.view.MyMarkdownView
+                android:id="@+id/tv_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{content}" />
+                android:background="@{role == ChatRole.USER ? Color.parseColor(`#DEF3FE`) : Color.WHITE}"
+                android:textIsSelectable="true" />
 
         </LinearLayout>
 

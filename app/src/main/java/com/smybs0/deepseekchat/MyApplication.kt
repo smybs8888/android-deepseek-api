@@ -1,11 +1,13 @@
 package com.smybs0.deepseekchat
 
 import android.app.Application
+import com.smybs0.deepseekchat.utils.initMarkwon
 import com.smybs0.deepseeklib.DeepseekConfig
 
 class MyApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         DeepseekConfig.init(this, "sk-e9cfebb57763477d8407bc5effe69cbc")
+        initMarkwon(this)
     }
 }

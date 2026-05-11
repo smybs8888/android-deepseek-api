@@ -17,13 +17,13 @@
     </data>
 
     <androidx.drawerlayout.widget.DrawerLayout
-        android:id="@+id/main"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".MainActivity">
 
-        <FrameLayout
+        <com.drakeet.drawer.FullDraggableContainer
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -61,6 +61,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="流式响应" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:background="#CCC" />
 
                     <RadioGroup
                         android:id="@+id/rg_model"
@@ -106,12 +112,18 @@
                         android:checked="@={isEnabledThinking}"
                         android:text="深度思考" />
 
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:background="#CCC" />
+
                     <RadioGroup
                         android:id="@+id/rg_reasoning_effort"
-                        android:visibility="@{isEnabledThinking ? View.VISIBLE : View.GONE}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="@{isEnabledThinking ? View.VISIBLE : View.GONE}">
 
                         <TextView
                             android:layout_width="100dp"
@@ -125,14 +137,14 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="true"
-                            android:text="high" />
+                            android:text="高" />
 
                         <RadioButton
                             android:id="@+id/rb_effort_max"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="max" />
+                            android:text="最高" />
 
                     </RadioGroup>
 
@@ -166,7 +178,7 @@
                 android:text="请在左侧屏幕边缘右滑\n打开会话"
                 android:visibility="@{isConversationState ? View.GONE : View.VISIBLE}" />
 
-        </FrameLayout>
+        </com.drakeet.drawer.FullDraggableContainer>
 
         <LinearLayout
             android:layout_width="200dp"
